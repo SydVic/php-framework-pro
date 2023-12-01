@@ -13,7 +13,8 @@ $appEnv = $_SERVER['APP_ENV'];
 $templatesPath = BASE_PATH . '/templates';
 
 $container->add('APP_ENV', new \League\Container\Argument\Literal\StringArgument($appEnv));
-$databaseUrl =  'sqlite:///' . BASE_PATH . '/var/db.sqlite';
+//$databaseUrl =  'sqlite:///' . BASE_PATH . '/var/db.sqlite';
+$databaseUrl = 'pdo-mysql://localhost:3306/foo?charset=utf8mb4';
 
 $container->add(
     'base-commands-namespace',
@@ -60,5 +61,10 @@ $container->add(\SydVic\Framework\Dbal\ConnectionFactory::class)
 $container->addShared(\Doctrine\DBAL\Connection::class, function () use ($container): \Doctrine\DBAL\Connection {
     return $container->get(\SydVic\Framework\Dbal\ConnectionFactory::class)->create();
 });
+
+$container->add(
+    'database:migrations:migrate',
+    \SydVic\Framework\Console\Command\MigrateDatabase::class
+)->addArgument(\Doctrine\DBAL\Connection::class);
 
 return $container;

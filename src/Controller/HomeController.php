@@ -17,4 +17,11 @@ class HomeController extends abstractController
     {
         return $this->render('home.html.twig');
     }
+
+    public function phpinfo(): Response
+    {
+        $content = phpinfo();
+
+        return new Response($content);
+    }
 }
