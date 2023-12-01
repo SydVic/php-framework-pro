@@ -36,6 +36,12 @@ $container->add(SydVic\Framework\Http\Kernel::class)
     ->addArgument(SydVic\Framework\Routing\RouterInterface::class)
     ->addArgument($container);
 
+$container->add(\SydVic\Framework\Console\Application::class)
+    ->addArgument($container);
+
+$container->add(\SydVic\Framework\Console\Kernel::class)
+    ->addArguments([$container, \SydVic\Framework\Console\Application::class]);
+
 $container->addShared('filesystem-loader', \Twig\Loader\FilesystemLoader::class)
     ->addArgument(new \League\Container\Argument\Literal\StringArgument($templatesPath));
 
@@ -54,8 +60,5 @@ $container->add(\SydVic\Framework\Dbal\ConnectionFactory::class)
 $container->addShared(\Doctrine\DBAL\Connection::class, function () use ($container): \Doctrine\DBAL\Connection {
     return $container->get(\SydVic\Framework\Dbal\ConnectionFactory::class)->create();
 });
-
-$container->add(\SydVic\Framework\Console\Kernel::class)
-    ->addArgument($container);
 
 return $container;

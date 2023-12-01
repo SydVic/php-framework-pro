@@ -8,7 +8,8 @@ use SydVic\Framework\Console\Command\CommandInterface;
 final class Kernel
 {
     public function __construct(
-        private ContainerInterface $container
+        private ContainerInterface $container,
+        private Application $application
     )
     {
     }
