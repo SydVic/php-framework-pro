@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+// set a base path
+define('BASE_PATH', dirname(__DIR__));
+
+//require the autoloader
+require_once BASE_PATH . '/vendor/autoload.php';
+
+// require the container
+/** @var \Psr\Container\ContainerInterface $container */
+$container = require BASE_PATH . '/config/services.php';
+
+// get the console from the container
+$kernel = $container->get(\SydVic\Framework\Console\Kernel::class);
+
+// call a handle method on the Kernel, return the console application status code
+$status = $kernel->handle();
+
+// exit with status code
+exit($status);

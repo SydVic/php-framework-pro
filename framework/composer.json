@@ -1,0 +1,38 @@
+{
+  "name": "sydvicframework/php-framework-pro",
+  "description": "PHP build your own framework course",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gary Clarke",
+      "email": "info@garyclarke.tech"
+    },
+    {
+      "name": "sydvic",
+      "email": "fabrizio.bocca27@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "SydVic\\Framework\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SydVic\\Framework\\Tests\\": "tests"
+    }
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^6.3",
+    "phpunit/phpunit": "^11.0@dev"
+  },
+  "require": {
+    "nikic/fast-route": "^2.0.x-dev",
+    "psr/container": "^2.0@dev",
+    "league/container": "^4.0.0",
+    "symfony/dotenv": "^6.0",
+    "twig/twig": "^3.0",
+    "doctrine/dbal": "^3.7.2"
+  }
+}
