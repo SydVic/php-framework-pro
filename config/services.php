@@ -11,10 +11,17 @@ $container->delegate(new \League\Container\ReflectionContainer(true));
 $routes = include BASE_PATH . '/routes/web.php';
 $appEnv = $_SERVER['APP_ENV'];
 $templatesPath = BASE_PATH . '/templates';
+#db connection
+$dbConnection = $_SERVER['DB_CONNECTION'];
+$dbUsername = $_SERVER['DB_USERNAME'];
+$dbPassword = $_SERVER['DB_PASSWORD'];
+$dbHost = $_SERVER['DB_HOST'];
+$dbPort = $_SERVER['DB_PORT'];
+$dbDatabase = $_SERVER['DB_DATABASE'];
 
 $container->add('APP_ENV', new \League\Container\Argument\Literal\StringArgument($appEnv));
-//$databaseUrl =  'sqlite:///' . BASE_PATH . '/var/db.sqlite';
-$databaseUrl = 'pdo-mysql://localhost:3306/foo?charset=utf8mb4';
+
+$databaseUrl = "$dbConnection://$dbUsername:$dbPassword@$dbHost:$dbPort/$dbDatabase";
 
 $container->add(
     'base-commands-namespace',
@@ -65,6 +72,9 @@ $container->addShared(\Doctrine\DBAL\Connection::class, function () use ($contai
 $container->add(
     'database:migrations:migrate',
     \SydVic\Framework\Console\Command\MigrateDatabase::class
-)->addArgument(\Doctrine\DBAL\Connection::class);
+)->addArguments([
+    \Doctrine\DBAL\Connection::class,
+    new \League\Container\Argument\Literal\StringArgument(BASE_PATH . '/migrations')
+]);
 
 return $container;

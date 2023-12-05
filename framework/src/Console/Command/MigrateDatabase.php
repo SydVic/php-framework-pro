@@ -11,28 +11,91 @@ class MigrateDatabase implements CommandInterface
     private string $name = 'database:migrations:migrate';
 
     public function __construct(
-        private Connection $connection
+        private Connection $connection,
+        private string $migrationsPath
     )
     {
+        $this->connection->setAutoCommit(false);
     }
     public function execute(array $params = []): int
     {
-        // Create a migrations table SQL if table not already in existence
-        $this->createMigrationTable();
+        try {
+            // Create a migrations table SQL if table not already in existence
+            $this->createMigrationTable();
 
-        // Get $appliedMigrations which are already in the database.migrations table
+            $this->connection->beginTransaction();
 
-        // Get the $migrationFiles from the migrations folder
+            // Get $appliedMigrations which are already in the database.migrations table
+            $appliedMigrations = $this->getAppliedMigration();
 
-        // Get the migrations to apply. i.e. they are in $migrationFiles but not in $appliedMigrations
+            // Get the $migrationFiles from the migrations folder
+            $migrationFiles = $this->getMigrationFiles();
 
-        // Create SQL for any migrations which have not been run ..i.e. which are not in the database
+            // Get the migrations to apply. i.e. they are in $migrationFiles but not in $appliedMigrations
+            $migrationsToApply = array_diff($migrationFiles, $appliedMigrations);
 
-        // Add migration to database
+            $schema = new Schema();
 
-        // Execute the SQL query
+            // Create SQL for any migrations which have not been run ..i.e. which are not in the database
+            foreach ($migrationsToApply as $migration) {
+                // require the object
+                $migrationObject = require $this->migrationsPath . '/' . $migration;
 
-        return 0;
+                //call up method
+                $migrationObject->up($schema);
+
+                // add migration to database
+                $this->insertMigration($migration);
+            }
+
+            // Execute the SQL query
+            $sqlArray = $schema->toSql($this->connection->getDatabasePlatform());
+
+            foreach ($sqlArray as $sql) {
+                $this->connection->executeQuery($sql);
+            }
+
+            $this->connection->commit();
+
+            return 0;
+
+        } catch (\Throwable $throwable) {
+
+            $this->connection->rollback();
+
+            throw $throwable;
+        }
+    }
+
+    private function insertMigration(string $migration): void
+    {
+        $sql = "INSERT INTO migrations (migration) VALUES (?)";
+
+        $stmt = $this->connection->prepare($sql);
+
+        $stmt->bindValue(1, $migration);
+
+        $stmt->executeStatement();
+    }
+
+    private function getMigrationFiles(): array
+    {
+        $migrationFiles  = scandir($this->migrationsPath);
+
+        $filteredFiles = array_filter($migrationFiles, function($file) {
+            return !in_array($file, ['.', '..']);
+        });
+
+        return $filteredFiles;
+    }
+
+    private function getAppliedMigration(): array
+    {
+        $sql = "SELECT migration FROM migrations;";
+
+        $appliedMigrations = $this->connection->executeQuery($sql)->fetchFirstColumn();
+
+        return $appliedMigrations;
     }
 
     private function createMigrationTable(): void
@@ -46,10 +109,12 @@ class MigrateDatabase implements CommandInterface
             $table->addColumn('migration', Types::STRING);
             $table->addColumn('created_at', Types::DATETIME_IMMUTABLE, ['default' => 'CURRENT_TIMESTAMP']);
             $table->setPrimaryKey(['id']);
+
+            $sqlArray = $schema->toSql($this->connection->getDatabasePlatform());
+
+            $this->connection->executeQuery($sqlArray[0]);
+
+            echo 'migrations table created' . PHP_EOL;
         }
-
-        $sqlArray = $schema->toSql($this->connection->getDatabasePlatform());
-
-        dd($sqlArray);
     }
 }
