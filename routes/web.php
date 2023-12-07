@@ -3,8 +3,17 @@
 use SydVic\Framework\Http\Response;
 
 return [
+    // PHPINFO
     ['GET', '/phpinfo', [\App\Controller\HomeController::class, 'phpinfo']],
+
+    // HOME
     ['GET', '/', [\App\Controller\HomeController::class, 'index']],
+
+    // AUTH
+    ['GET', '/register', [\App\Controller\Auth\RegistrationController::class, 'create']],
+    ['POST', '/register', [\App\Controller\Auth\RegistrationController::class, 'store']],
+
+    // POSTS
     ['GET', '/posts/{id:\d+}', [\App\Controller\PostsController::class, 'show']],
     ['GET', '/posts/create', [\App\Controller\PostsController::class, 'create']],
     ['POST', '/posts/store', [\App\Controller\PostsController::class, 'store']],
