@@ -8,7 +8,6 @@ use App\Repository\PostRepository;
 use SydVic\Framework\Controller\AbstractController;
 use SydVic\Framework\Http\RedirectResponse;
 use SydVic\Framework\Http\Response;
-use SydVic\Framework\Session\SessionInterface;
 
 class PostsController extends AbstractController
 {
@@ -17,7 +16,6 @@ class PostsController extends AbstractController
     public function __construct(
         private PostMapper $postMapper,
         private PostRepository $postRepository,
-        private SessionInterface $session,
     )
     {
     }
@@ -45,7 +43,10 @@ class PostsController extends AbstractController
 
         $this->postMapper->save($post);
 
-        $this->session->setFlash('success', sprintf('Post "%s" successfully created', $title));
+        $this->request->getSession()->setFlash(
+            'success',
+            sprintf('Post "%s" successfully created', $title)
+        );
 
         return new RedirectResponse($this->createRoute);
     }
