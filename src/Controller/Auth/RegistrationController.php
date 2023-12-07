@@ -4,6 +4,7 @@ namespace App\Controller\Auth;
 
 use App\Form\User\RegistrationForm;
 use SydVic\Framework\Controller\AbstractController;
+use SydVic\Framework\Http\RedirectResponse;
 use SydVic\Framework\Http\Response;
 
 class RegistrationController extends AbstractController
@@ -28,7 +29,11 @@ class RegistrationController extends AbstractController
         // Validate
         // If validation errors,
         if ($form->hasValidationErrors()) {
-            $form->getValidationErrors();
+            foreach ($form->getValidationErrors() as $error) {
+                $this->request->getSession()->setFlash('error', $error);
+            }
+
+            return new RedirectResponse('/register');
         }
 
         // add to session, redirect to form

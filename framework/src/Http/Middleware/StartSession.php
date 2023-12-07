@@ -9,16 +9,19 @@ use SydVic\Framework\Session\SessionInterface;
 class StartSession implements MiddlewareInterface
 {
     public function __construct(
-        private SessionInterface $session
+        private SessionInterface $session,
+        private readonly string $apiPrefix =  '/api/'
     )
     {
     }
 
     public function process(Request $request, RequestHandlerInterface $requestHandler): Response
     {
-        $this->session->start();
+        if (!str_starts_with($request->getPathInfo(), $this->apiPrefix)) {
+            $this->session->start();
 
-        $request->setSession($this->session);
+            $request->setSession($this->session);
+        }
 
         return $requestHandler->handle($request);
     }

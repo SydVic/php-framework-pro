@@ -7,7 +7,9 @@ class Session implements SessionInterface
     private const FLASH_KEY = 'flash';
     public function start(): void
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     public function set(string $key, $value): void
