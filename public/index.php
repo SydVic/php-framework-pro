@@ -24,3 +24,6 @@ $kernel = $container->get(Kernel::class);
 $response = $kernel->handle($request);
 
 $response->send();
+
+// request cleanup
+$kernel->terminate($request, $response);
