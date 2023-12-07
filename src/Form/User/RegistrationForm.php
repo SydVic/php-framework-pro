@@ -53,6 +53,8 @@ class RegistrationForm
             $this->errors[] = 'Username can only consist of word characters without spaces';
         }
 
+        // TODO check that username is not already taken
+
         // password length
         if (strlen($this->username) < 8) {
             $this->errors[] = 'Password must be at least 8 characters';

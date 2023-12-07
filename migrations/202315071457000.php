@@ -7,6 +7,7 @@ return new class {
 
     public function up(Schema $schema): void
     {
+        // TODO username must be unique
         $table = $schema->createTable('users');
         $table->addColumn('id', Types::INTEGER, ['autoincrement' => true, 'unsigned' => true]);
         $table->addColumn('username', Types::STRING, ['length' => 255]);

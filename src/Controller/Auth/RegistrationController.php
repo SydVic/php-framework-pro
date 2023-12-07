@@ -48,7 +48,7 @@ class RegistrationController extends AbstractController
         $user = $form->save();
 
         // Add a session success message
-        $this->request->getSession()->setFlas(
+        $this->request->getSession()->setFlash(
             'success',
             sprintf('User %s created', $user->getUsername())
         );
