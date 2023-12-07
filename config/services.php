@@ -40,9 +40,17 @@ $container->extend(SydVic\Framework\Routing\RouterInterface::class)
         [new \League\Container\Argument\Literal\ArrayArgument($routes)]
     );
 
+$container->add(
+    \SydVic\Framework\Http\Middleware\RequestHandlerInterface::class,
+    \SydVic\Framework\Http\Middleware\RequestHandler::class
+)->addArgument($container);
+
 $container->add(SydVic\Framework\Http\Kernel::class)
-    ->addArgument(SydVic\Framework\Routing\RouterInterface::class)
-    ->addArgument($container);
+    ->addArguments([
+        SydVic\Framework\Routing\RouterInterface::class,
+        $container,
+        \SydVic\Framework\Http\Middleware\RequestHandlerInterface::class
+    ]);
 
 $container->add(\SydVic\Framework\Console\Application::class)
     ->addArgument($container);

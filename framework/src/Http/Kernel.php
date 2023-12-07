@@ -3,6 +3,7 @@
 namespace SydVic\Framework\Http;
 
 use Psr\Container\ContainerInterface;
+use SydVic\Framework\Http\Middleware\RequestHandlerInterface;
 use SydVic\framework\Routing\RouterInterface;
 
 class Kernel
@@ -10,7 +11,8 @@ class Kernel
     private string $appEnv;
     public function __construct(
         private RouterInterface $router,
-        private ContainerInterface $container
+        private ContainerInterface $container,
+        private RequestHandlerInterface $requestHandler,
     )
     {
         $this->appEnv = $this->container->get('APP_ENV');
@@ -18,12 +20,13 @@ class Kernel
     public function handle(Request $request): Response
     {
         try {
-            [$routeHandler, $vars] = $this->router->dispatch($request, $this->container);
 
-            $response = call_user_func_array($routeHandler, $vars);
+            $response = $this->requestHandler->handle($request);
 
         } catch (\Exception $exception) {
+
             $response = $this->createExceptionResponse($exception);
+
         }
 
         return $response;
