@@ -94,4 +94,10 @@ $container->add(
     new \League\Container\Argument\Literal\StringArgument(BASE_PATH . '/migrations')
 ]);
 
+$container->add(\SydVic\Framework\Http\Middleware\RouterDispatch::class)
+    ->addArguments([
+        \SydVic\Framework\Routing\RouterInterface::class,
+        $container
+    ]);
+
 return $container;
