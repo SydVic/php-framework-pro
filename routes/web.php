@@ -14,6 +14,7 @@ return [
     ['POST', '/register', [\App\Controller\Auth\RegistrationController::class, 'store']],
     ['GET', '/login', [\App\Controller\Auth\LoginController::class, 'index']],
     ['POST', '/login', [\App\Controller\Auth\LoginController::class, 'login']],
+    ['GET', '/dashboard', [\App\Controller\Auth\DashboardController::class, 'index']],
 
     // POSTS
     ['GET', '/posts/{id:\d+}', [\App\Controller\PostsController::class, 'show']],
