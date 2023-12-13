@@ -100,4 +100,7 @@ $container->add(\SydVic\Framework\Http\Middleware\RouterDispatch::class)
         $container
     ]);
 
+$container->add(\SydVic\Framework\Authentication\SessionAuthentication::class)
+    ->addArgument(\App\Repository\UserRepository::class);
+
 return $container;
