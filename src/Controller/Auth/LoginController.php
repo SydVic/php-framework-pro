@@ -29,7 +29,11 @@ class LoginController extends AbstractController
         );
 
         // if successful, retrieve the user
+        if ($userIsAuthenticated) {
+            $user = $this->authComponent->getUser();
+        }
 
         // redirect the user to intended location
+
     }
 }

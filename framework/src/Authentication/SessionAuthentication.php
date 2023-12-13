@@ -2,10 +2,14 @@
 
 namespace SydVic\Framework\Authentication;
 
+use SydVic\Framework\Session\SessionInterface;
+
 class SessionAuthentication implements SessionAuthInterface
 {
+    private AuthUserInterface $user;
     public function __construct(
-        private AuthRepositoryInterface $authRepository
+        private AuthRepositoryInterface $authRepository,
+        private SessionInterface $session
     )
     {
     }
@@ -34,7 +38,14 @@ class SessionAuthentication implements SessionAuthInterface
 
     public function login(AuthUserInterface $user)
     {
-        // TODO: Implement login() method.
+        // start a session
+        $this->session->start();
+
+        // log the user in
+        $this->session->set('auth_id', $user->getAuthId());
+
+        // set the user
+        $this->user = $user;
     }
 
     public function logout()
@@ -44,6 +55,6 @@ class SessionAuthentication implements SessionAuthInterface
 
     public function getUser(): AuthUserInterface
     {
-        // TODO: Implement getUser() method.
+        return $this->user;
     }
 }
